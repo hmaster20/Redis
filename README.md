@@ -178,3 +178,32 @@ docker exec -ti redis-zero redis-cli --no-auth-warning -u redis://readonly:newpa
 # Проверим значение ключа
 docker exec -ti redis-zero redis-cli --no-auth-warning -u redis://readonly:newpass@192.168.56.74:6380 GET test_key
 ```
+
+---
+
+## Redis-Commander
+
+За основу взято решение [redis-commander](https://github.com/joeferner/redis-commander/pkgs/container/redis-commander).
+Сборка образа описана в [Dockerfile](https://github.com/joeferner/redis-commander/blob/master/Dockerfile) проекта.
+
+Redis-Commander является веб-сервером, написанном на node.js,
+и представляет собой консоль веб-управления как одиночными экземплярами Redis, так и кластерами (Sentinel).
+Само приложение не является ресурсоёмкое, практически не потребляет ЦП и занимает порядка 24 МБ ОЗУ.
+
+## Образы
+
+Возможно использование публичного образа доступного в репозитория:
+DockerHub:
+    image: rediscommander/redis-commander:latest
+GitHub:
+    image: ghcr.io/joeferner/redis-commander:latest
+
+## Развертывание
+
+Для тестового (локального) развертывания можно использовать файл docker-compose.yml
+Запуск и вывод статистики приложения выполняется командами:
+
+```shell
+docker-compose up -d
+docker-compose logs -f
+```
