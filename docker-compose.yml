@@ -1,51 +1,95 @@
 version: "3.9"
 services:
-  redis-zero:
-    container_name: redis-zero
-    hostname: redis-zero
-    image: redis
-    ports:
-    - "6380:6379"
-
-  redis:
-    container_name: redis
+  redis-0:
+    container_name: redis-0
+    hostname: redis-0
     image: "redis:6.2-alpine"
     restart: "always"
     ports:
-    - "6381:6379"
+    - "6380:6379"
     volumes:
-      - redis:/data
-    command: redis-server --appendonly yes --requirepass redispass
+      - redis-0:/data
+    command: redis-server --appendonly yes
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "50"
 
-  redis-commander-multi:
-    container_name: redis-commander-multi
-    hostname: redis-commander-multi
+  redis-1:
+    container_name: redis-1
+    image: "redis:6.2-alpine"
+    restart: "always"
+    ports:
+    - "6381:6379"
+    volumes:
+      - redis-1:/data
+    command: redis-server --appendonly yes --requirepass redispassone
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
+
+  redis-2:
+    container_name: redis-2
+    image: "redis:6.2-alpine"
+    restart: "always"
+    ports:
+    - "6382:6379"
+    volumes:
+      - redis-2:/data
+    command: redis-server --appendonly yes --requirepass redispasstwo
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
+
+
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
     image: rediscommander/redis-commander:latest
     restart: always
     environment:
-    - REDIS_HOSTS=local:192.168.56.74:6380,WithPass:192.168.56.74:6381:0:redispass
+    - REDIS_HOSTS=local:192.168.56.74:6380,redis-1:192.168.56.74:6381:0:redispassone,redis-2:192.168.56.74:6382:0:redispasstwo
     ports:
     - "8081:8081"
+    depends_on:
+      - redis-0
+      - redis-1
+      - redis-2
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
 
-  redis-commanders:
-    container_name: redis-commander
-    hostname: redis-commander
+  redis-commander-custom:
+    container_name: redis-commander-custom
+    hostname: redis-commander-custom
     image: ghcr.io/joeferner/redis-commander:latest
+    restart: no
     environment:
     - REDIS_HOST=192.168.56.74
-    - REDIS_PORT=6381
-    - REDIS_USERNAME=ivan
-    - REDIS_PASSWORD=pass
+    - REDIS_PORT=6382
+    - REDIS_USERNAME=readonly
+    - REDIS_PASSWORD=passonly
+    # Change default port redis-commander
     - PORT=8082
     ports:
     - "8082:8082"
     profiles:
       - donotstart
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
+
 
 volumes:
-  redis:
+  redis-0:
+  redis-1:
+  redis-2:
