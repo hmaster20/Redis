@@ -1,5 +1,3 @@
-[[_TOC_]]
-
 # Redis
 
 ## Обзор
@@ -104,43 +102,43 @@ ACL SETUSER admin on allkeys allchannels +@all >adminpass
 ACL LIST
 ```
 
-```shell
-# Вывести список доступов, используя redis-cli внутри контенйнера Redis
-docker exec -ti redis-zero redis-cli --no-auth-warning -u redis://admin:adminpass@192.168.56.74:6380 ACL LIST
-
-```
-
 ### Создаем учетную запись только для чтения
 
 #### - Интерактивное создание
 
 ```shell
-# Создать учетную запись (УЗ)
-ACL SETUSER readonly
-# Сбросить все правила для учетной записи
-ACL SETUSER readonly reset
-# Создаем УЗ с параметрами доступа
-ACL SETUSER readonly on +info +select +@read
+# Выполняем подключение, используя пароль администратора
+redis-cli -h 192.168.56.74 -p 6381 -a redispassone --no-auth-warning
 
-# Создаем УЗ с паролем и параметрами доступа
+# Создаем учетную запись (УЗ)
+ACL SETUSER readonly
+# Если необходимо, сбрасываем все правила
+ACL SETUSER readonly reset
+# Обновляем УЗ, добавляя параметры доступа
+ACL SETUSER readonly on +info +select +@read
+ACL SETUSER readonly on +GET allkeys >newpass
+
+# Можно сделать тоже самое одной командой (!)
 ACL SETUSER readonly on allkeys +GET +info +select +@read >newpass
 
-## Можно делать тоже самое, используя набор команд:
-ACL SETUSER readonly
-ACL SETUSER readonly on +GET allkeys >newpass
-ACL SETUSER readonly on +info
-ACL SETUSER readonly on +select
-ACL SETUSER readonly on +@read
-
-## Список доступов всех юзеров
+# Чтобы отобразить правила доступа для всех пользователей
 ACL LIST
-## Список доступов юзера readonly
+# Вывести информацию для пользователя readonly
 ACL GETUSER readonly
 
-## Получение прочих параметров
-CONFIG GET maxclients
-INFO Server
+# Создаем тестовый ключ | Если база чистая
+SET key_redis value_one
+GET key_redis
 
+CTRL + D -> Выходим
+```
+
+Как проверить доступ с новой УЗ ?
+
+```shell
+redis-cli -h 192.168.56.74 -p 6381
+AUTH readonly newpass
+GET key_redis
 ```
 
 #### - Создание УЗ одной командой из консоли
