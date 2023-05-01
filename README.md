@@ -62,31 +62,38 @@ redis-cli -u redis://<username>:<password>@<host>[:port]
 redis-cli -u redis://user:somepass@192.168.56.74:6381
 ```
 
+При выполнении команды выше, может появляться сообщение вида:
+
 > Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe
-> Для подавления, можно добавить ключ `--no-auth-warning`
+
+Для подавления, можно использовать ключ `--no-auth-warning`
+
 > redis-cli --no-auth-warning -u redis://user:somepass@192.168.56.74:6381
 
 ## Об управлении учетными записями
 
 Управление пользователями выполняется командой [ACL SETUSER](https://redis.io/commands/acl-setuser/)
 
-> По умолчанию, в системе создана административная учетная запись пользователя default без пароля
-> (`user default on nopass ~* &* +@all"`)
-> При запуске Redis, можно задать пароль, выполнив команду `redis-server --requirepass <password>` и указав нужный пароль
-> (`user default on #ba073dbe27113d5124a9ff32bcca35380e142bfd8e73f19f6e088a376fa0d192 ~* &* +@all`)
+По умолчанию, в системе создана административная учетная запись пользователя default без пароля
 
-Для шифрования паролей используется SHA256, что  указано в разделе ["How passwords are stored internally"](https://redis.io/docs/management/security/acl/).
+> (`user default on nopass ~* &* +@all"`)
+
+При запуске Redis, можно задать пароль, выполнив команду `redis-server --requirepass <password>` и указав нужный пароль
+
+> (`user default on #ba073dbe27113d518a376fa0d192 ~* &* +@all`)
+
+Для шифрования паролей используется SHA256, что  указано в разделе ["How passwords are stored internally"](https://redis.io/docs/management/security/acl/). Кстати, для создания пароля, можно воспользоваться командой [ACL GENPASS](https://redis.io/commands/acl-genpass/)
+
+---
 
 Для вывода информации о пользователях и паролях, можно использовать команды
 
 - [`ACL LIST`](https://redis.io/commands/acl-list)
 - [`ACL GETUSER <user>`](https://redis.io/commands/acl-getuser), например `ACL GETUSER default`.
 
-> Для генерации пароля, можно воспользоваться командой [ACL GENPASS](https://redis.io/commands/acl-genpass/)
-
 ## Управление учетными записями
 
-### Создаем административную учетную запись (Admin)
+### Создаем административную учетную запись
 
 ```shell
 
