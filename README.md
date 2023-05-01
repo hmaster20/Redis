@@ -96,10 +96,15 @@ redis-cli -u redis://user:somepass@192.168.56.74:6381
 ### Создаем административную учетную запись
 
 ```shell
-
-ACL SETUSER adm
-ACL SETUSER user on +GET allkeys >pass
+# Создать учетную запись (УЗ) с параметрами доступа и паролем
+ACL SETUSER admin on allkeys allchannels +@all >adminpass
+# Вывести список доступов
 ACL LIST
+```
+
+```shell
+# Вывести список доступов, используя redis-cli внутри контенйнера Redis
+docker exec -ti redis-zero redis-cli --no-auth-warning -u redis://admin:adminpass@192.168.56.74:6380 ACL LIST
 
 ```
 
