@@ -118,7 +118,8 @@ ACL SETUSER readonly on +info +select +@read
 # Создаем УЗ с паролем и параметрами доступа
 ACL SETUSER readonly on allkeys +GET +info +select +@read >newpass
 
-## Можно делать тоже самое используя набор команд
+## Можно делать тоже самое, используя набор команд:
+ACL SETUSER readonly
 ACL SETUSER readonly on +GET allkeys >newpass
 ACL SETUSER readonly on +info
 ACL SETUSER readonly on +select
@@ -126,6 +127,7 @@ ACL SETUSER readonly on +@read
 
 ## Список доступов всех юзеров
 ACL LIST
+## Список доступов юзера readonly
 ACL GETUSER readonly
 
 ## Получение прочих параметров
