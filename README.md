@@ -22,7 +22,6 @@ Redis, из «коробки», включает поддержку класте
 
 ```shell
 sudo apt install -yq redis-tools
-redis-cli
 ```
 
 Для вывода справки, выполняется команда:
