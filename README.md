@@ -60,26 +60,26 @@ redis-cli -h 192.168.56.74 -p 6381 -a redispass
 # Если требуется выполнить подключение к базе под конкретным пользователем,
 # то можно выбрать один из следующих вариантов.
 
-# Стандартное подключение и затем авторизация:
-redis-cli -h <host> [-p <port>]
-AUTH [username] <password>
+# Стандартное подключение, с последующим вводом логина и пароля:
+redis-cli -h <host> -p <port>
+AUTH <username> <password>
 # Например:
 redis-cli -h 192.168.56.74 -p 6381
-AUTH user somepass
+192.168.56.74:6381> AUTH user somepass
 
 # Другой формат подключения
-redis-cli -u redis://<username>:<password>@<host>[:port]
+redis-cli -u redis://<username>:<password>@<host>:<port>
 # Например:
 redis-cli -u redis://user:somepass@192.168.56.74:6381
 ```
 
-При выполнении команды выше, может появляться сообщение вида:
+При выполнении команды выше, может появляться предупреждение:
 
 > Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe
 
-Для подавления, можно использовать ключ `--no-auth-warning`
+Для скрытия предупреждения можно использовать ключ `--no-auth-warning`
 
-> redis-cli --no-auth-warning -u redis://user:somepass@192.168.56.74:6381
+---
 
 ## Об управлении учетными записями
 
