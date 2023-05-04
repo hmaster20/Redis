@@ -115,6 +115,8 @@ ACL SETUSER admin on allkeys allchannels +@all >adminpass
 ACL LIST
 ```
 
+---
+
 ### Создаем учетную запись только для чтения
 
 #### - Интерактивное создание
@@ -158,7 +160,12 @@ GET key_redis
 
 ```shell
 # Создаем
-redis-cli ACL SETUSER readonly on allkeys +GET +info +select +@read >newpass
+redis-cli -h 192.168.56.74 -p 6382 -a redispasstwo --no-auth-warning ACL SETUSER testreader on allkeys +GET +info +select +@read \>testpass
+redis-cli -h 192.168.56.74 -p 6382 -a redispasstwo --no-auth-warning ACL LIST
+
+# Создаем тестовый ключ | Если база чистая
+redis-cli -h 192.168.56.74 -p 6382 -a redispasstwo --no-auth-warning SET key_redis value_two
+```
 
 # Проверяем
 # redis-cli -u redis://<username>:<password>@<host>:<port> <command>
