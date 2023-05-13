@@ -1,0 +1,7 @@
+---
+
+- name: Node tunning
+  import_tasks: tuning.yml
+
+- name: Install Redis
+  import_tasks: install.yml

@@ -1,0 +1,43 @@
+---
+
+- name: Sentinel | Create service file
+  ansible.builtin.copy:
+    src: sentinel.service
+    dest: /etc/systemd/system/sentinel.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Sentinel | Create config file
+  template:
+    src: sentinel.conf.j2
+    dest: /etc/redis/sentinel.conf
+    trim_blocks: false
+    owner: redis
+    group: redis
+    mode: '0644'
+
+- name: Sentinel | Configure firewall to enable port TCP 26379
+  firewalld:
+    zone: internal
+    port: 26379/tcp
+    permanent: true
+    state: enabled
+
+- ansible.posix.firewalld:
+    zone: internal
+    source: "{{redis_network}}"
+    permanent: true
+    state: enabled
+
+- name: Sentinel | Restart firewalld
+  systemd:
+    name: firewalld
+    state: restarted
+    force: yes
+
+- name: Sentinel | Start
+  systemd:
+    name: "sentinel"
+    enabled: yes
+    state: restarted

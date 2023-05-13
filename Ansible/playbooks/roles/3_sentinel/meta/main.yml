@@ -1,0 +1,12 @@
+galaxy_info:
+  name: 3_sentinel
+  description: Настройка Redis в режиме sentinel
+  author: Serg
+  company: FreeDom
+  license: MIT
+  min_ansible_version: 2.9
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 20.04

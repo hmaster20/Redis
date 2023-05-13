@@ -1,0 +1,46 @@
+---
+
+- name: Add redis stable repository from PPA # https://redis.io/download
+  ansible.builtin.apt_repository:
+    repo: ppa:redislabs/redis
+
+- name: Redis | Install
+  apt:
+    name: redis-server
+    install_recommends: no
+    update_cache: yes
+
+- name: Redis | Disable default service
+  systemd:
+    name: redis-server
+    enabled: no
+    state: stopped
+
+- name: Redis | Configure
+  ansible.builtin.copy:
+    src: "etc/redis/redis-{{ item }}.conf"
+    dest: /etc/redis/redis.conf
+    owner: redis
+    group: redis
+    mode: '0644'
+  loop:
+    - main
+
+- name: Redis | Configure firewall to enable port TCP 6379
+  firewalld:
+    zone: internal
+    port: 6379/tcp
+    permanent: true
+    state: enabled
+
+- name: Redis | Restart firewalld
+  systemd:
+    name: firewalld
+    state: restarted
+    force: yes
+
+- name: Redis | Start
+  systemd:
+    name: "redis-server"
+    enabled: yes
+    state: restarted

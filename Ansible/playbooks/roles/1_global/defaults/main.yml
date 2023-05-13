@@ -1,0 +1,18 @@
+---
+
+addon_packages:
+- mc
+- nano
+- htop
+- iotop
+- telnet
+- nload
+- ncdu
+- netcat
+- chrony
+- gcc
+- jq
+- unzip
+- wget
+- resolvconf
+- firewalld

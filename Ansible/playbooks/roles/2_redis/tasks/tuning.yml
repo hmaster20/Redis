@@ -1,0 +1,44 @@
+---
+
+- name: Tuning | Set vm.overcommit_memory to 1 in /etc/sysctl.conf
+  ansible.posix.sysctl:
+    name: vm.overcommit_memory
+    value: '1'
+    state: present
+
+- name: Tuning | Set net.core.somaxconn to 65536 in /etc/sysctl.conf
+  ansible.posix.sysctl:
+    name: net.core.somaxconn
+    value: '65536'
+    state: present
+
+- name: Tuning | Set net.ipv4.tcp_max_syn_backlog to 8192 in /etc/sysctl.conf
+  ansible.posix.sysctl:
+    name: net.ipv4.tcp_max_syn_backlog
+    value: '8192'
+    state: present
+    
+- name: Tuning | Disable thp
+  shell: "echo never > {{ item }}"
+  with_items:
+    - /sys/kernel/mm/transparent_hugepage/enabled
+    - /sys/kernel/mm/transparent_hugepage/defrag
+  ignore_errors: true
+
+- name: Tuning | Disable thp after every init script had initialized
+  lineinfile:
+    dest: /etc/rc.local
+    insertafter: EOF
+    state: present
+    create: yes
+    line: |
+      #!/bin/bash
+      echo never > /sys/kernel/mm/transparent_hugepage/enabled
+      echo never > /sys/kernel/mm/transparent_hugepage/defrag
+    mode: 0744
+
+- name: Tuning | Enable rc-local
+  systemd:
+    name: "rc-local"
+    enabled: yes
+    state: restarted

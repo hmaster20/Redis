@@ -1,0 +1,12 @@
+galaxy_info:
+  name: 0_global
+  description: Общая для всех узлов. Устанавливает пакеты и тайм зону
+  author: Serg
+  company: FreeDom
+  license: MIT
+  min_ansible_version: 2.9
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 20.04

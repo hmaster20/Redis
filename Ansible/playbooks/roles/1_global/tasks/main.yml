@@ -1,0 +1,12 @@
+---
+
+- name: Global | Set timezone to Europe/Moscow
+  command: timedatectl set-timezone Europe/Moscow
+  changed_when: false
+
+- name: Global | Install addons
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items: "{{ addon_packages }}"
