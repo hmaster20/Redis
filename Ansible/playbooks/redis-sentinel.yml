@@ -1,0 +1,9 @@
+---
+- hosts: sentinels
+  become: yes
+  roles:
+    - role: 1_global
+    - role: 2_redis
+    - role: 3_sentinel
+      vars:
+        redis_network: 10.224.128.0/22
