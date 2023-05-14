@@ -1,0 +1,19 @@
+{
+  "connections": [
+    {
+      "label": "redis-0",
+      "host": "192.168.56.74",
+      "port": 6380,
+      "password": "",
+      "dbIndex": 0
+    },
+    {
+      "label": "redis-1",
+      "host": "192.168.56.74",
+      "port": 6381,
+      "username": "default",
+      "password": "redispassone",
+      "dbIndex": 0
+    }
+  ]
+}
