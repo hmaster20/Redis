@@ -101,7 +101,7 @@ redis-cli -u redis://user:somepass@192.168.56.74:6381
 
 ---
 
-Для вывода информации о пользователях и паролях, можно использовать команды
+Для вывода информации о пользователях и паролях через redis-cli, можно использовать команды:
 
 - [`ACL LIST`](https://redis.io/commands/acl-list)
 - [`ACL GETUSER <user>`](https://redis.io/commands/acl-getuser), например `ACL GETUSER default`.
@@ -160,15 +160,28 @@ AUTH readonly newpass
 GET key_redis
 ```
 
-#### - Создание УЗ одной командой из консоли
+#### - Создание УЗ одной командой
 
 ```shell
 # Создаем
-redis-cli -h 192.168.56.74 -p 6382 -a redispasstwo --no-auth-warning ACL SETUSER testreader on allkeys +GET +info +select +@read \>testpass
+redis-cli -h <ip> -p <port> -a <pass> --no-auth-warning ACL SETUSER <user> on allkeys +GET +info +select +@read \><pass>
+redis-cli -h <ip> -p <port> -a <pass> --no-auth-warning ACL LIST
+# Например
+redis-cli -h 192.168.56.74 -p 6382 -a redispasstwo --no-auth-warning ACL SETUSER readonly on allkeys +GET +info +select +@read \>passonly
 redis-cli -h 192.168.56.74 -p 6382 -a redispasstwo --no-auth-warning ACL LIST
-
-# Создаем тестовый ключ | Если база чистая
+# Создаем тестовый ключ (если база чистая)
 redis-cli -h 192.168.56.74 -p 6382 -a redispasstwo --no-auth-warning SET key_redis value_two
+
+
+# Как проверить доступ с новой УЗ ?
+
+# Тест аутентификации
+redis-cli -h 192.168.56.74 -p 6382 AUTH readonly passonly
+# А так не работает :)
+redis-cli -u redis://readonly:passonly@192.168.56.74:6382 GET key_redis
+# Зато так работает
+docker exec -ti redis-2 redis-cli --no-auth-warning -u redis://readonly:passonly@192.168.56.74:6382 GET key_redis
+
 ```
 
 # Проверяем
