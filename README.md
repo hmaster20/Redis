@@ -36,8 +36,11 @@ redis-cli --help
 В процессе запуска, будут запущены 3 экземпляра Redis и 2 экземпляра redis-commander.
 Это сделано для демонстрации различных вариантов настройки.
 
+### Запуск
 
 ```shell
+git clone https://github.com/hmaster20/Redis.git
+cd Redis
 docker compose up -d
 docker compose ps
 docker compose logs -f
