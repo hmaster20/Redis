@@ -70,6 +70,26 @@ services:
     container_name: redis-commander-custom
     hostname: redis-commander-custom
     image: ghcr.io/joeferner/redis-commander:latest
+    restart: always
+    ports:
+    - "8082:8081"
+    command:  /redis-commander/bin/redis-commander.js --read-only /redis-commander/config/local-production.json
+    volumes:
+      - ./config_0.json:/redis-commander/config/local-production.json
+    depends_on:
+      - redis-0
+      - redis-1
+      - redis-2
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
+
+  redis-commander-custom-single:
+    container_name: redis-commander-custom-single
+    hostname: redis-commander-custom-single
+    image: ghcr.io/joeferner/redis-commander:latest
     restart: no
     environment:
     - REDIS_HOST=192.168.56.74
@@ -77,9 +97,12 @@ services:
     - REDIS_USERNAME=readonly
     - REDIS_PASSWORD=passonly
     # Change default port redis-commander
-    - PORT=8082
+    - PORT=8083
+    - REDIS_LABEL=custom-single
+    # Change RD to READ-ONLY mode
+    - READ_ONLY=true
     ports:
-    - "8082:8082"
+    - "8083:8083"
     profiles:
       - donotstart
     logging:
