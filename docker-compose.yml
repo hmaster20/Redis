@@ -111,6 +111,24 @@ services:
         max-size: "10m"
         max-file: "50"
 
+  redis-commander-custom-multi:
+    container_name: redis-commander-custom-multi
+    hostname: redis-commander-custom-multi
+    image: ghcr.io/joeferner/redis-commander:latest
+    restart: no
+    environment:
+    - PORT=8084     # Change default port redis-commander
+    ports:
+    - "8084:8084"
+    volumes:
+      - ./config.json:/redis-commander/config/local-production.json
+    profiles:
+      - donotstart
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
 
 volumes:
   redis-0:
