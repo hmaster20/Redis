@@ -234,63 +234,41 @@ redis-cli -u redis://readonly:passonly@192.168.56.74:6382 GET key_redis
 # Зато так работает
 docker exec -ti redis-2 redis-cli --no-auth-warning -u redis://readonly:passonly@192.168.56.74:6382 GET key_redis
 
+# > Запускаем контейнеры
+docker compose up -d redis-commander-custom-single
+docker compose stop redis-commander-custom-single
+docker compose up -d redis-commander-custom-multi
+#
+# Подключаемся через веб браузер и проверяем доступность экземпляров Redis
+http://192.168.56.74:8081
+http://192.168.56.74:8082
+http://192.168.56.74:8083
+http://192.168.56.74:8084
+В место указанного IP-адреса, нужно указать ваш.
 ```
 
-# Проверяем
-# redis-cli -u redis://<username>:<password>@<host>:<port> <command>
-redis-cli -u redis://readonly:newpass@192.168.56.74:6381 INFO Server
-
-# Команда ниже, не позволяет выполнить INFO, т.к. исполняется AUTH
-# redis-cli -h 192.168.56.74 -p 6380 AUTH readonly newpass
-# Но от имени админа можно выполнить команду:
-# redis-cli -h <host> -p <port> <command>
-redis-cli -h 192.168.56.74 -p 6380 ACL LIST
-```
-
-#### - Создание УЗ для Redis внутри Docker
+##### - Создание УЗ для Redis внутри Docker
 
 ```shell
 # Команды в формате
 # docker exec -it <container_name> <command>
 
-# default | Через пользователя по умолчанию (админа)
-docker exec -it redis-zero redis-cli ACL SETUSER readonly on allkeys +GET +info +select +@read \>newpass
-docker exec -it redis-zero redis-cli ACL LIST
-docker exec -it redis-zero redis-cli ACL GETUSER readonly
+# default | Через пользователя по умолчанию
+docker exec -it redis-2 redis-cli ACL SETUSER reader on allkeys +GET +info +select +@read \>newpass
+docker exec -it redis-2 redis-cli ACL LIST
+docker exec -it redis-2 redis-cli ACL GETUSER reader
 # Создадим тестовый ключ
-docker exec -it redis-zero redis-cli SET test_key test_value
+docker exec -it redis-2 redis-cli SET test_key test_value
 
-# readonly | Через нового пользователя, проверим доступ
-docker exec -ti redis-zero redis-cli --no-auth-warning -u redis://readonly:newpass@192.168.56.74:6380 INFO Server
+# reader | Через нового пользователя, проверим доступ
+docker exec -ti redis-2 redis-cli --no-auth-warning -u redis://reader:newpass@192.168.56.74:6382 INFO Server
 # Проверим значение ключа
-docker exec -ti redis-zero redis-cli --no-auth-warning -u redis://readonly:newpass@192.168.56.74:6380 GET test_key
+docker exec -ti redis-2 redis-cli --no-auth-warning -u redis://reader:newpass@192.168.56.74:6382 GET test_key
 ```
 
----
-
-## Redis-Commander
-
-За основу взято решение [redis-commander](https://github.com/joeferner/redis-commander/pkgs/container/redis-commander).
-Сборка образа описана в [Dockerfile](https://github.com/joeferner/redis-commander/blob/master/Dockerfile) проекта.
-
-Redis-Commander является веб-сервером, написанном на node.js,
-и представляет собой консоль веб-управления как одиночными экземплярами Redis, так и кластерами (Sentinel).
-Само приложение не является ресурсоёмкое, практически не потребляет ЦП и занимает порядка 24 МБ ОЗУ.
-
-## Образы
-
-Возможно использование публичного образа доступного в репозитория:
-DockerHub:
-    image: rediscommander/redis-commander:latest
-GitHub:
-    image: ghcr.io/joeferner/redis-commander:latest
-
-## Развертывание
-
-Для тестового (локального) развертывания можно использовать файл docker-compose.yml
-Запуск и вывод статистики приложения выполняется командами:
+Для остановки используемой конфигурации [`docker-compose.yml`](docker-compose.yml),
+в частности опции [`donotstart`](https://github.com/hmaster20/Redis/blob/2e54fea890b188b6248eb471ffd0de84a8cbbedf/docker-compose.yml#L126), выполняем команду:
 
 ```shell
-docker-compose up -d
-docker-compose logs -f
+docker compose down --remove-orphans
 ```
