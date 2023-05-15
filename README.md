@@ -14,7 +14,7 @@ Redis энергозависим и при перезапуске сервера
 
 Redis, из «коробки», включает поддержку кластеров и поставляется с инструментами высокой доступности Sentinel.
 
-## Консольная утилита
+## Консольная утилита | redis-cli
 
 Для подключения к Redis можно использовать консольную утилиту `redis-cli`.
 
@@ -106,9 +106,61 @@ redis-cli -u redis://user:somepass@192.168.56.74:6381
 - [`ACL LIST`](https://redis.io/commands/acl-list)
 - [`ACL GETUSER <user>`](https://redis.io/commands/acl-getuser), например `ACL GETUSER default`.
 
-## Управление учетными записями
+---
 
-### Создаем административную учетную запись
+## Графическая утилита | Redis-Commander
+
+За основу взято решение [redis-commander](https://github.com/joeferner/redis-commander/pkgs/container/redis-commander).
+Сборка образа описана в [Dockerfile](https://github.com/joeferner/redis-commander/blob/master/Dockerfile) проекта.
+
+Redis-Commander является веб-сервером, написанном на node.js,
+и представляет собой консоль веб-управления как одиночными экземплярами Redis, так и кластерами (Sentinel).
+Само приложение не является ресурсоёмкое, практически не потребляет ЦП и занимает порядка 24 МБ ОЗУ.
+
+### Образы
+
+Возможно использование публичного образа доступного в репозитория:
+DockerHub:
+    image: rediscommander/redis-commander:latest
+GitHub:
+    image: ghcr.io/joeferner/redis-commander:latest
+
+### Примечание
+
+Redis-Commander имеет возможность подключаться к экземплярам Redis по логину и паролю.
+Кроме этого, в целях обеспечения безопасности, он сам может иметь логин и пароль для доступа к UI.
+Используя переменные, можно подключиться только к одному экземпляру Redis или кластеру Sentinel.
+При использовании переменных Docker, файл конфигурации создается автоматически внутри контейнера.
+Но есть обходной вариант. Предварительное создание и использования файлов конфигурации в формате json.
+Затем проброс файла внутрь контейнера.
+Примеры файлов можно увидеть [здесь](config.json) и [здесь](config_0.json).
+Подробнее про использование переменных [здесь](https://github.com/joeferner/redis-commander/blob/master/docs/connections.md) и [здесь](https://github.com/joeferner/redis-commander/blob/master/docs/configuration.md).
+
+> В связи с тем, что `Redis-Commander` не является ресурсоемким, его можно использовать как сайдкар, при деплое совместно с экземпляром Redis.
+
+---
+
+## Демонстрационный стенд
+
+Стенд представляет из себя [`docker-compose.yml`](docker-compose.yml),
+содержащий описание контейнеров redis и redis-commander.
+По умолчанию, будут запущены 3 экземпляра Redis и 2 экземпляра redis-commander.
+[`redis-commander-custom-single`](https://github.com/hmaster20/Redis/blob/2e54fea890b188b6248eb471ffd0de84a8cbbedf/docker-compose.yml#L89) и [`redis-commander-custom-multi`](https://github.com/hmaster20/Redis/blob/2e54fea890b188b6248eb471ffd0de84a8cbbedf/docker-compose.yml#L114) запускаются вручную.
+Это сделано для демонстрации различных вариантов настройки.
+
+### Запуск
+
+```shell
+git clone https://github.com/hmaster20/Redis.git
+cd Redis
+docker compose up -d
+docker compose ps
+docker compose logs -f
+```
+
+### Управление учетными записями
+
+#### Создаем административную учетную запись
 
 Если хотим создать новую запись администратора, то сделать это можно так:
 
