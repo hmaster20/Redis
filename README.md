@@ -167,6 +167,10 @@ ACL SETUSER readonly reset
 ACL SETUSER readonly on +info +select +@read
 ACL SETUSER readonly on +GET allkeys >newpass
 
+# Другие примеры
+# ACL SETUSER testreaders on ~* &* +@all \>testpasses
+# ACL SETUSER readonly on +config|get
+
 # Можно сделать тоже самое одной командой (!)
 ACL SETUSER readonly on allkeys +GET +info +select +@read >newpass
 
