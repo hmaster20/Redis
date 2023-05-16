@@ -44,6 +44,7 @@ redis-cli -h 192.168.56.74 -p 6381 -a redispass
 # то можно выбрать один из следующих вариантов.
 
 # Стандартное подключение, с последующим вводом логина и пароля:
+# https://redis.io/commands/auth/
 redis-cli -h <host> -p <port>
 AUTH <username> <password>
 # Например:
