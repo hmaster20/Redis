@@ -32,3 +32,37 @@ redis-cli info replication
 redis-cli config set protected-mode "no"
 
 ### Подключение к старому мастеру
+tail -f /var/log/redis/redis-server.log
+tail -f /var/log/redis/redis-sentinel.log
+
+nano /etc/redis/redis-sentinel.conf
+redis-server /etc/redis/redis-sentinel.conf --sentinel
+redis-cli -p 26379 info sentinel
+
+redis-cli replicaof no one
+
+Когда сервисы запущены, выполняем настройку
+
+3. Состояние репликации проверяем командой redis-cli info replication
+    Также отслеживаем состояние репликации на мастере tail -f /var/log/redis/redis-server.log
+    Проверяем наличие ключей
+    redis-cli DBSIZE
+    redis-cli keys *
+    Проверяем какие бегут команды
+    redis-cli monitor
+
+4. Отклчаем мастера от старого мастера
+    redis-cli replicaof no one
+
+5. Проверяем состояние sentinel командой redis-cli -p 26379 info sentinel
+    Состояние должно смениться status=ok
+    Также отслеживаем журнал на мастере tail -f /var/log/redis/redis-sentinel.log
+    На мастере должно быть изменени +sdown > -sdown, на узлах не важно
+
+6. Создаем ключи на мастере
+    redis-cli
+    127.0.0.1:6379> set key01 001
+   Проверяем их наличие на репликах
+    redis-cli
+    127.0.0.1:6379> get key01
+
