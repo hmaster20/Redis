@@ -32,6 +32,20 @@ redis-cli info replication
 redis-cli config set protected-mode "no"
 
 ### Подключение к старому мастеру
+
+redis-cli replicaof 10.224.128.222 6379
+
+### Подключение к новому мастеру, который сейчас реплика старого мастера :)
+
+redis-cli replicaof 10.224.128.111 6379
+
+redis-cli
+127.0.0.1:6379> DBSIZE
+127.0.0.1:6379> KEYS *
+
+redis-cli DBSIZE
+redis-cli keys *
+
 tail -f /var/log/redis/redis-server.log
 tail -f /var/log/redis/redis-sentinel.log
 
