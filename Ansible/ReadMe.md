@@ -86,3 +86,4 @@ redis-cli replicaof no one
     redis-cli
     127.0.0.1:6379> get key01
 
+<https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-20-04-ru>
